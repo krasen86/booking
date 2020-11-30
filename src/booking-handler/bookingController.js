@@ -1,13 +1,14 @@
-// const {ChangeController} = require("./changeController");
+const {RequestHandler} = require("./requestHandler");
 
 
 class BookingController {
     constructor() {
     }
     processRequest(message) {
-        const buffer = message.toString('utf-8');
+        const bookingRequest = message.toString('utf-8');
+        let requestHandler = new RequestHandler();
+        requestHandler.checkTimeSlot(JSON.parse(bookingRequest));
     }
-
     processBooking(message) {
         const buffer = message.toString('utf-8');
     }

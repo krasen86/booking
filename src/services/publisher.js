@@ -1,5 +1,4 @@
 const {MQTT} = require("./mqttConnector")
-const fs = require("fs")
 const variables = require("../config/variables")
 
 class Publisher {
@@ -11,7 +10,7 @@ class Publisher {
     }
 
     publishTimeslotCheck(timeSlot) {
-        MQTT.publish(variables.TIMESLOT_TOPIC, timeSlot, {retain:true});
+        MQTT.publish(variables.TIMESLOT_TOPIC, JSON.stringify(timeSlot), {retain:true});
     }
 }
 module.exports.Publisher = Publisher;
