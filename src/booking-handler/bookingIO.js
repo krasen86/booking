@@ -32,5 +32,15 @@ class BookingIO {
         }
     }
 
+    readRequest(request) {
+        let fileName = './booking-data/requests-' + request.dentistid +'.json'
+        fs.readFileSync(fileName, (err, data) => {
+            const requests = data.toString('utf-8');
+            let bookingRequests = JSON.parse(requests);
+            return bookingRequests;
+        })
+
+    }
+
 }
 module.exports.BookingIO = BookingIO

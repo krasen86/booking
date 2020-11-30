@@ -1,4 +1,5 @@
 const {RequestHandler} = require("./requestHandler");
+const {BookingHandler} = require("./bookingHandler");
 
 
 class BookingController {
@@ -10,7 +11,9 @@ class BookingController {
         requestHandler.checkTimeSlot(JSON.parse(bookingRequest));
     }
     processBooking(message) {
-        const buffer = message.toString('utf-8');
+        const confirmation = message.toString('utf-8');
+        let bookingHandler = new BookingHandler();
+        bookingHandler.checkConfirmation(JSON.parse(confirmation))
     }
 }
 module.exports.BookingController = BookingController
