@@ -10,7 +10,7 @@ class Subscriber {
     }
 
     subscribeToTopic(topic) {
-        MQTT.subscribe(topic, function () {
+        MQTT.subscribe(topic, {qos:1},function () {
             console.log('Subscribed ' + topic)
         })
     }
