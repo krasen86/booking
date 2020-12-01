@@ -3,7 +3,10 @@ module.exports = {
     REQUEST_TOPIC: 'request',
     RESPONSE_TOPIC: 'response',
     TIMESLOT_TOPIC: 'timeslot',
-    CONFIRMATION_TOPIC: 'confirmation'
+    CONFIRMATION_TOPIC: 'confirmation',
+    DIRECTORY: './booking-data/',
+    DIRECTORY_BOOKING: './booking-data/booking-',
+    DIRECTORY_REQUESTS: './booking-data/requests-'
 };
 
 

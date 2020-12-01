@@ -1,18 +1,15 @@
 const fs = require("fs");
+const variables = require("../config/variables")
 
 class BookingIO {
     constructor() {
     }
 
-    saveBooking() {
-
-    }
-
-    writeRequest(request) {
-        let fileName = './booking-data/requests-' + request.dentistid +'.json'
+    writeData(dir, request) {
+        let fileName =dir + request.dentistid +'.json'
         try {
             if (fs.existsSync(fileName)) {
-                let bookingRequests = this.readRequest(request);
+                let bookingRequests = this.readData(dir, request);
                 bookingRequests.then(response => {
                     let list = JSON.parse(response)
                     list.push(request)
@@ -21,21 +18,20 @@ class BookingIO {
                     console.log(err)
                 })
             } else {
-                let dir = './booking-data'
-                if (!fs.existsSync(dir)){
-                    fs.mkdirSync(dir);
+                if (!fs.existsSync(variables.DIRECTORY)){
+                    fs.mkdirSync(variables.DIRECTORY);
                 }
-                let timeSlots = [];
-                timeSlots.push(request)
-                fs.writeFileSync(fileName, JSON.stringify(timeSlots));
+                let list = [];
+                list.push(request)
+                fs.writeFileSync(fileName, JSON.stringify(list));
             }
         } catch(err) {
             console.error(err)
         }
     }
-    deleteRequest(request) {
-        let fileName = './booking-data/requests-' + request.dentistid +'.json'
-        let bookingRequests = this.readRequest(request);
+    deleteData(dir, request) {
+        let fileName = dir + request.dentistid +'.json'
+        let bookingRequests = this.readData(dir, request);
         bookingRequests.then(response => {
             let list = JSON.parse(response);
             const index = list.findIndex(item => item.userid === request.userid);
@@ -44,8 +40,8 @@ class BookingIO {
         })
     }
 
-    readRequest(request) {
-        let fileName = './booking-data/requests-' + request.dentistid +'.json'
+    readData(dir, request) {
+        let fileName = dir + request.dentistid +'.json'
         return new Promise((resolve, reject) => {
             fs.readFile(fileName, (err, data) => {
                 if (err) {

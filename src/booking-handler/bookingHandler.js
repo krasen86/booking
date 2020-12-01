@@ -1,6 +1,6 @@
 const {Publisher} = require( "../services/publisher");
 const {BookingIO} = require("./bookingIO");
-
+const variables = require("../config/variables")
 
 class BookingHandler {
     constructor() {
@@ -8,7 +8,7 @@ class BookingHandler {
     checkConfirmation(confirmation) {
         let publisher = new Publisher();
         let bookingIO = new BookingIO();
-        let bookingRequests = bookingIO.readRequest(confirmation);
+        let bookingRequests = bookingIO.readData(variables.DIRECTORY_REQUESTS, confirmation);
 
         bookingRequests.then(requests => {
             let list = JSON.parse(requests);
@@ -19,7 +19,8 @@ class BookingHandler {
                 success.userid = booking.userid;
                 success.requestid = booking.requestid;
                 success.time = booking.time;
-                bookingIO.deleteRequest(confirmation);
+                bookingIO.deleteData(variables.DIRECTORY_REQUESTS, confirmation);
+                bookingIO.writeData(variables.DIRECTORY_BOOKING, booking);
                 publisher.publishBookingResponse(success);
             } else if (!confirmation.available && booking !== undefined) {
                 let error = {};
@@ -32,9 +33,7 @@ class BookingHandler {
         }).catch(err => {
             console.log(err)
         })
-
     }
-
 
 }
 module.exports.BookingHandler = BookingHandler

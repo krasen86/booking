@@ -1,6 +1,6 @@
 const {Publisher} = require( "../services/publisher");
 const {BookingIO} = require("./bookingIO");
-
+const variables = require("../config/variables")
 
 class RequestHandler {
     constructor() {
@@ -12,7 +12,7 @@ class RequestHandler {
         timeSlot.time = bookingRequest.time;
         publisher.publishTimeslotCheck(timeSlot);
         let bookingIO = new BookingIO();
-        bookingIO.writeRequest(bookingRequest);
+        bookingIO.writeData(variables.DIRECTORY_REQUESTS, bookingRequest);
     }
 }
 module.exports.RequestHandler = RequestHandler
