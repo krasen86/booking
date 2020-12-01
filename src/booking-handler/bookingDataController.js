@@ -1,18 +1,17 @@
 const fs = require("fs");
 const variables = require("../config/variables")
 
-class BookingIO {
+class BookingDataController {
     constructor() {
     }
-
-    writeData(dir, request) {
-        let fileName =dir + request.dentistid +'.json'
+    writeData(dir, data) {
+        let fileName = dir + data.dentistid +'.json'
         try {
             if (fs.existsSync(fileName)) {
-                let bookingRequests = this.readData(dir, request);
-                bookingRequests.then(response => {
+                let bookingData = this.readData(dir, data);
+                bookingData.then(response => {
                     let list = JSON.parse(response)
-                    list.push(request)
+                    list.push(data)
                     fs.writeFileSync(fileName, JSON.stringify(list));
                 }).catch(err => {
                     console.log(err)
@@ -22,33 +21,33 @@ class BookingIO {
                     fs.mkdirSync(variables.DIRECTORY);
                 }
                 let list = [];
-                list.push(request)
+                list.push(data)
                 fs.writeFileSync(fileName, JSON.stringify(list));
             }
         } catch(err) {
             console.error(err)
         }
     }
-    deleteData(dir, request) {
-        let fileName = dir + request.dentistid +'.json'
-        let bookingRequests = this.readData(dir, request);
-        bookingRequests.then(response => {
+    deleteData(dir, data) {
+        let fileName = dir + data.dentistid +'.json'
+        let bookingData = this.readData(dir, data);
+        bookingData.then(response => {
             let list = JSON.parse(response);
-            const index = list.findIndex(item => item.userid === request.userid);
+            const index = list.findIndex(item => item.userid === data.userid);
             list.splice(index,1);
             fs.writeFileSync(fileName, JSON.stringify(list));
         })
     }
 
-    readData(dir, request) {
-        let fileName = dir + request.dentistid +'.json'
+    readData(dir, data) {
+        let fileName = dir + data.dentistid +'.json'
         return new Promise((resolve, reject) => {
-            fs.readFile(fileName, (err, data) => {
+            fs.readFile(fileName, (err, readData) => {
                 if (err) {
                     reject(err)
                 }
                 else {
-                    resolve( data);
+                    resolve( readData);
                 }
             })
         })
@@ -63,4 +62,4 @@ class BookingIO {
 
     }
 }
-module.exports.BookingIO = BookingIO
+module.exports.BookingDataController = BookingDataController

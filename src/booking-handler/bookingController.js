@@ -1,5 +1,5 @@
-const {RequestHandler} = require("./requestHandler");
-const {BookingHandler} = require("./bookingHandler");
+const {RequestProcessor} = require("./requestProcessor");
+const {BookingProcessor} = require("./bookingProcessor");
 
 
 class BookingController {
@@ -7,13 +7,13 @@ class BookingController {
     }
     processRequest(message) {
         const bookingRequest = message.toString('utf-8');
-        let requestHandler = new RequestHandler();
-        requestHandler.checkTimeSlot(JSON.parse(bookingRequest));
+        let requestProcessor = new RequestProcessor();
+        requestProcessor.checkTimeSlot(JSON.parse(bookingRequest));
     }
     processBooking(message) {
         const confirmation = message.toString('utf-8');
-        let bookingHandler = new BookingHandler();
-        bookingHandler.checkConfirmation(JSON.parse(confirmation))
+        let bookingProcessor = new BookingProcessor();
+        bookingProcessor.checkConfirmation(JSON.parse(confirmation))
     }
 }
 module.exports.BookingController = BookingController
