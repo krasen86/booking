@@ -9,7 +9,6 @@ class BookingHandler {
         let publisher = new Publisher();
         let bookingIO = new BookingIO();
         let bookingRequests = bookingIO.readData(variables.DIRECTORY_REQUESTS, confirmation);
-
         bookingRequests.then(requests => {
             let list = JSON.parse(requests);
             const index = list.findIndex(item => item.time === confirmation.time);
@@ -22,11 +21,13 @@ class BookingHandler {
                 bookingIO.deleteData(variables.DIRECTORY_REQUESTS, confirmation);
                 bookingIO.writeData(variables.DIRECTORY_BOOKING, booking);
                 publisher.publishBookingResponse(success);
+                if (list.some(item => item.time === confirmation.time)) {
+                    const index = list.findIndex(item => item.userid === booking.userid);
+                    list.splice(index,1);
+                    this.removeBookingRequests(list, confirmation.time, booking.dentistid);
+                }
             } else if (!confirmation.available && booking !== undefined) {
-                let error = {};
-                error.userid = booking.userid;
-                error.requestid = booking.requestid;
-                publisher.publishBookingResponse(error);
+                this.removeBookingRequests(list, confirmation.time, booking.dentistid);
             } else {
                 console.log("Error no matching booking requests with availability confirmation")
             }
@@ -34,6 +35,21 @@ class BookingHandler {
             console.log(err)
         })
     }
-
+    removeBookingRequests(list, time, dentistid) {
+        let publisher = new Publisher();
+        let bookingIO = new BookingIO();
+        let updatedList = list.filter(item => {
+            if (item.time === time) {
+                let error = {};
+                error.userid = item.userid;
+                error.requestid = item.requestid;
+                publisher.publishBookingResponse(error);
+            }
+            else {
+                return item
+            }
+        });
+        bookingIO.replaceDataSet(variables.DIRECTORY_REQUESTS, dentistid, updatedList)
+    }
 }
 module.exports.BookingHandler = BookingHandler

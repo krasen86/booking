@@ -55,5 +55,12 @@ class BookingIO {
 
     }
 
+    replaceDataSet(dir, id, dataSet) {
+        let fileName = dir + id +'.json'
+        fs.readFile(fileName, () => {
+            fs.writeFileSync(fileName, JSON.stringify(dataSet));
+        })
+
+    }
 }
 module.exports.BookingIO = BookingIO
