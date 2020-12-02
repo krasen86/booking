@@ -1,15 +1,19 @@
-// const {ChangeController} = require("./changeController");
+const {RequestProcessor} = require("./requestProcessor");
+const {BookingProcessor} = require("./bookingProcessor");
 
 
 class BookingController {
     constructor() {
     }
     processRequest(message) {
-        const buffer = message.toString('utf-8');
+        const bookingRequest = message.toString('utf-8');
+        let requestProcessor = new RequestProcessor();
+        requestProcessor.checkTimeSlot(JSON.parse(bookingRequest));
     }
-
     processBooking(message) {
-        const buffer = message.toString('utf-8');
+        const confirmation = message.toString('utf-8');
+        let bookingProcessor = new BookingProcessor();
+        bookingProcessor.checkConfirmation(JSON.parse(confirmation))
     }
 }
 module.exports.BookingController = BookingController
