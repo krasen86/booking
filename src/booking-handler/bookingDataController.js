@@ -1,8 +1,10 @@
 const fs = require("fs");
 const variables = require("../config/variables")
+const {ErrorLogger} = require('../services/errorLogger');
 
 class BookingDataController {
     constructor() {
+        this.errorLogger = new ErrorLogger();
     }
     writeData(dir, data) {
         let fileName = dir + data.dentistid +'.json'
@@ -25,7 +27,8 @@ class BookingDataController {
                 fs.writeFileSync(fileName, JSON.stringify(list));
             }
         } catch(err) {
-            console.error(err)
+
+            this.errorLogger.logError(err, 'File System')
         }
     }
     deleteData(dir, data) {
