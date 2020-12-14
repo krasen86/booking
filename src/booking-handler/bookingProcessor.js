@@ -40,11 +40,10 @@ class BookingProcessor {
         success.userid = booking.userid;
         success.requestid = booking.requestid;
         success.time = booking.time;
-        bookingDataController.deleteData(confirmation);
+        bookingDataController.deleteData(booking);
         bookingDataController.writeBooking(booking);
         publisher.publishBookingResponse(success);
-
-        if (requestList.some(request => request.time === confirmation.time)) {
+        if (requestList.filter(request => request.time === confirmation.time)>1) {
             const index = requestList.findIndex(request => request.userid === booking.userid);
             requestList.splice(index,1);
             this.removeDeclinedRequests(requestList, confirmation.time, booking.dentistid);
