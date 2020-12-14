@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "limiter": "^1.1.5",
+    "mqtt": "^4.2.5",
+    "winston": "^3.3.3"
     "mqtt": "^4.2.5",
     "mongoose": "^5.10.0",
     "morgan": "^1.10.0"

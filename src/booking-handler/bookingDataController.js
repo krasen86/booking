@@ -1,9 +1,11 @@
 const Requests = require("../models/requests");
 const Bookings = require("../models/bookings");
 var mongoose = require('mongoose');
+const {ErrorLogger} = require('../services/errorLogger');
 
 class BookingDataController {
     constructor() {
+        this.errorLogger = new ErrorLogger();
     }
     writeRequest(data) {
             let request = new Requests( {
@@ -30,7 +32,7 @@ class BookingDataController {
     deleteData(data) {
         Requests.findOneAndDelete({userid: data.userid},function (err, deleted){
             if (err) {
-                console.log(err)
+                this.errorLogger.logError(err, 'File System')
             }
         });
     }

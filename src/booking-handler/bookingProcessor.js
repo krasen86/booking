@@ -1,8 +1,11 @@
 const {Publisher} = require( "../services/publisher");
 const {BookingDataController} = require("./bookingDataController");
+const variables = require("../config/variables")
+const {ErrorLogger} = require('../services/errorLogger');
 
 class BookingProcessor {
     constructor() {
+        this.errorLogger = new ErrorLogger();
     }
     async checkConfirmation(confirmation) {
         let bookingDataController = new BookingDataController();
@@ -26,7 +29,7 @@ class BookingProcessor {
             } else if (!confirmation.available && booking !== undefined) {
                 this.removeDeclinedRequests(requestList, confirmation.time, booking.dentistid);
             } else {
-                console.log("Error no matching booking requests with availability confirmation")
+               this.errorLogger.logError("Error no matching booking requests with availability confirmation", 'BookingProcessor')
             }
     }
 
