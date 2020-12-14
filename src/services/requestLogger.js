@@ -1,5 +1,6 @@
 const winston = require('winston');
 const { createLogger, format} = require('winston');
+require('mongodb-winston-transport');
 const { combine, timestamp, printf } = format;
 const myFormat = printf(({ level, message, label, timestamp }) => {
     return `${timestamp} [${label}] ${level}: ${message}`;
@@ -13,7 +14,13 @@ class RequestLogger {
                 myFormat
             ),
             transports: [
-                new winston.transports.File({ filename: './logs/requests.log' }),
+                new winston.transports.MongoDB({
+                    db: 'mongodb://localhost:27017/booking',
+                    collection:'logs',
+                    capped:true,
+                    metaKey:'meta'
+                }),
+
                 new winston.transports.Console(),
             ]
         });
