@@ -10,10 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "limiter": "^1.1.5",
-    "mongodb-winston-transport": "^1.0.4",
     "mongoose": "^5.10.0",
     "morgan": "^1.10.0",
     "mqtt": "^4.2.5",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "winston-mongodb": "^5.0.5"
   }
 }
