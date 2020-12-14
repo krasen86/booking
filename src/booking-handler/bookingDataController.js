@@ -1,65 +1,43 @@
-const fs = require("fs");
-const variables = require("../config/variables")
+const Requests = require("../models/requests");
+const Bookings = require("../models/bookings");
+var mongoose = require('mongoose');
 
 class BookingDataController {
     constructor() {
     }
-    writeData(dir, data) {
-        let fileName = dir + data.dentistid +'.json'
-        try {
-            if (fs.existsSync(fileName)) {
-                let bookingData = this.readData(dir, data);
-                bookingData.then(response => {
-                    let list = JSON.parse(response)
-                    list.push(data)
-                    fs.writeFileSync(fileName, JSON.stringify(list));
-                }).catch(err => {
-                    console.log(err)
-                })
-            } else {
-                if (!fs.existsSync(variables.DIRECTORY)){
-                    fs.mkdirSync(variables.DIRECTORY);
-                }
-                let list = [];
-                list.push(data)
-                fs.writeFileSync(fileName, JSON.stringify(list));
-            }
-        } catch(err) {
-            console.error(err)
-        }
-    }
-    deleteData(dir, data) {
-        let fileName = dir + data.dentistid +'.json'
-        let bookingData = this.readData(dir, data);
-        bookingData.then(response => {
-            let list = JSON.parse(response);
-            const index = list.findIndex(item => item.userid === data.userid);
-            list.splice(index,1);
-            fs.writeFileSync(fileName, JSON.stringify(list));
-        })
-    }
-
-    readData(dir, data) {
-        let fileName = dir + data.dentistid +'.json'
-        return new Promise((resolve, reject) => {
-            fs.readFile(fileName, (err, readData) => {
-                if (err) {
-                    reject(err)
-                }
-                else {
-                    resolve( readData);
-                }
+    writeRequest(data) {
+            let request = new Requests( {
+                _id: new mongoose.Types.ObjectId(),
+                userid: data.userid,
+                requestid:  data.requestid,
+                dentistid:  data.dentistid,
+                issuance: data.issuance,
+                time: data.time
             })
+            request.save()
+    }
+    writeBooking(data) {
+        let booking = new Bookings( {
+            _id: new mongoose.Types.ObjectId(),
+            userid: data.userid,
+            requestid:  data.requestid,
+            dentistid:  data.dentistid,
+            issuance: data.issuance,
+            time: data.time
         })
-
+        booking.save()
+    }
+    deleteData(data) {
+        Requests.findOneAndDelete({userid: data.userid},function (err, deleted){
+            if (err) {
+                console.log(err)
+            }
+        });
     }
 
-    replaceDataSet(dir, id, dataSet) {
-        let fileName = dir + id +'.json'
-        fs.readFile(fileName, () => {
-            fs.writeFileSync(fileName, JSON.stringify(dataSet));
-        })
-
+    async readData() {
+       return Requests.find();
     }
+
 }
 module.exports.BookingDataController = BookingDataController
