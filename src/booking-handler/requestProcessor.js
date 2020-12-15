@@ -1,6 +1,6 @@
 const {Publisher} = require( "../services/publisher");
 const {BookingDataController} = require("./bookingDataController");
-const variables = require("../config/variables")
+
 
 class RequestProcessor {
     constructor() {
@@ -13,7 +13,7 @@ class RequestProcessor {
         timeSlot.time = bookingRequest.time;
         publisher.publishTimeslotCheck(timeSlot);
         let bookingDataController = new BookingDataController();
-        bookingDataController.writeData(variables.DIRECTORY_REQUESTS, bookingRequest);
+        bookingDataController.writeRequest(bookingRequest);
     }
 }
 module.exports.RequestProcessor = RequestProcessor

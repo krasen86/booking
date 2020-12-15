@@ -1,18 +1,17 @@
 const {Publisher} = require( "../services/publisher");
 const {BookingDataController} = require("./bookingDataController");
 const variables = require("../config/variables")
+const {ErrorLogger} = require('../services/errorLogger');
 
 class BookingProcessor {
     constructor() {
+        this.errorLogger = new ErrorLogger();
     }
-    checkConfirmation(confirmation) {
+    async checkConfirmation(confirmation) {
         let bookingDataController = new BookingDataController();
-        let bookingRequests = bookingDataController.readData(variables.DIRECTORY_REQUESTS, confirmation);
-
-        bookingRequests.then(requests => {
-            let requestList = JSON.parse(requests);
+        let requestList = await bookingDataController.readData();
             let booking = {}
-            if (requestList.some(request => request.time === confirmation.time)) {
+            if (requestList.filter(request => request.time === confirmation.time)>1) {
                 let sameBookingTimeRequests = requestList.filter(bookingRequest => {
                     if (bookingRequest.time === confirmation.time) {
                         return bookingRequest
@@ -30,11 +29,8 @@ class BookingProcessor {
             } else if (!confirmation.available && booking !== undefined) {
                 this.removeDeclinedRequests(requestList, confirmation.time, booking.dentistid);
             } else {
-                console.log("Error no matching booking requests with availability confirmation")
+               this.errorLogger.logError("Error no matching booking requests with availability confirmation", 'BookingProcessor')
             }
-        }).catch(err => {
-            console.log(err)
-        })
     }
 
     processAcceptedRequest(booking, confirmation, requestList) {
@@ -44,18 +40,17 @@ class BookingProcessor {
         success.userid = booking.userid;
         success.requestid = booking.requestid;
         success.time = booking.time;
-        bookingDataController.deleteData(variables.DIRECTORY_REQUESTS, confirmation);
-        bookingDataController.writeData(variables.DIRECTORY_BOOKING, booking);
+        bookingDataController.deleteData(booking);
+        bookingDataController.writeBooking(booking);
         publisher.publishBookingResponse(success);
-
-        if (requestList.some(request => request.time === confirmation.time)) {
+        if (requestList.filter(request => request.time === confirmation.time)>1) {
             const index = requestList.findIndex(request => request.userid === booking.userid);
             requestList.splice(index,1);
             this.removeDeclinedRequests(requestList, confirmation.time, booking.dentistid);
         }
     }
 
-    removeDeclinedRequests(requestList, time, dentistid) {
+    removeDeclinedRequests(requestList, time) {
         let publisher = new Publisher();
         let bookingDataController = new BookingDataController();
         let updatedList = requestList.filter(bookingRequest => {
@@ -64,12 +59,12 @@ class BookingProcessor {
                 declinedRequest.userid = bookingRequest.userid;
                 declinedRequest.requestid = bookingRequest.requestid;
                 publisher.publishBookingResponse(declinedRequest);
+                bookingDataController.deleteData(bookingRequest);
             }
             else {
                 return bookingRequest
             }
         });
-        bookingDataController.replaceDataSet(variables.DIRECTORY_REQUESTS, dentistid, updatedList)
     }
 }
 module.exports.BookingProcessor = BookingProcessor
