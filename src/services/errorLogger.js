@@ -1,6 +1,7 @@
 const winston = require('winston');
 const { createLogger,transports, format} = require('winston');
 const { combine, timestamp, printf } = format;
+const variables = require("../config/variables");
 require('winston-mongodb');
 const myFormat = printf(({ level, message, label, timestamp }) => {
     return `${timestamp} [${label}] ${level}: ${message}`;
@@ -15,8 +16,8 @@ class ErrorLogger {
             ),
             transports: [
                 new transports.MongoDB({
-                    db: 'mongodb://localhost:27017/booking',
-                    collection:'logs',
+                    db: variables.MONGODB_LOG_URI,
+                    collection:variables.MONGODB_LOG_ERROR_COLLECTION,
                     capped:true,
                     options: { useUnifiedTopology: true }
                 }),

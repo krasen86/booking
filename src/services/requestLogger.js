@@ -1,6 +1,7 @@
 const winston = require('winston');
 const { createLogger,transports, format} = require('winston');
 require('winston-mongodb');
+const variables = require("../config/variables");
 const { combine, timestamp, printf } = format;
 const myFormat = printf(({ level, message, label, timestamp }) => {
     return `${timestamp} [${label}] ${level}: ${message}`;
@@ -15,8 +16,8 @@ class RequestLogger {
             ),
             transports: [
                 new transports.MongoDB({
-                    db: 'mongodb://localhost:27017/booking',
-                    collection:'logs',
+                    db: variables.MONGODB_LOG_URI,
+                    collection: variables.MONGODB_LOG_REQUEST_COLLECTION,
                     capped:true,
                     options: { useUnifiedTopology: true }
                 }),
@@ -39,6 +40,13 @@ class RequestLogger {
             label: 'Accepted',
             level: 'info',
             message: 'Request id: ' + request.requestid + ' User id: ' + request.userid + ' Dentist id: ' + request.dentistid
+        });
+    }
+    logDBConnectionSuccess(message){
+        this.requestLogger.log({
+            label: 'Connected',
+            level: 'info',
+            message: message
         });
     }
 }
