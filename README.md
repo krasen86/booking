@@ -14,4 +14,8 @@ npm install
 node index.js
 ```
 
+## Diagrams
 
+### Low-level booking component diagram
+
+![Component Diagram](documentation/images/component-5.png)
