@@ -12,7 +12,8 @@ class ErrorLogger {
         this.errorLogger = createLogger({
             format: combine(
                 timestamp(),
-                myFormat
+                myFormat,
+                format.metadata({fillWith: ['label'] })
             ),
             transports: [
                 new transports.MongoDB({
