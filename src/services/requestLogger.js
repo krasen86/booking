@@ -12,7 +12,8 @@ class RequestLogger {
         this.requestLogger = createLogger({
             format: combine(
                 timestamp(),
-                myFormat
+                myFormat,
+                format.metadata({fillWith: ['label'] })
             ),
             transports: [
                 new transports.MongoDB({
