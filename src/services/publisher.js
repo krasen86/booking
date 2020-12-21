@@ -7,7 +7,6 @@ class Publisher {
     publishBookingResponse(bookingResponse) {
         MQTT.publish(variables.RESPONSE_TOPIC + "/" + bookingResponse.userid, JSON.stringify(bookingResponse), {qos:1});
     }
-
     publishTimeslotCheck(timeSlot) {
         MQTT.publish(variables.TIMESLOT_TOPIC, JSON.stringify(timeSlot), {qos:1})
     }

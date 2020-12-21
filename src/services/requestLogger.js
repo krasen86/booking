@@ -12,7 +12,8 @@ class RequestLogger {
         this.requestLogger = createLogger({
             format: combine(
                 timestamp(),
-                myFormat
+                myFormat,
+                format.metadata({fillWith: ['label'] })
             ),
             transports: [
                 new transports.MongoDB({
@@ -44,7 +45,14 @@ class RequestLogger {
     }
     logDBConnectionSuccess(message){
         this.requestLogger.log({
-            label: 'Connected',
+            label: 'DB Connected',
+            level: 'info',
+            message: message
+        });
+    }
+    logLimiterAtFullCapacity(message){
+        this.requestLogger.log({
+            label: 'Limiter Running',
             level: 'info',
             message: message
         });
